@@ -1,3 +1,35 @@
 package-lock.json
-node_modules/
+
+# dependencies
+/node_modules
+
+# IDEs and editors
+ 12 /.idea
+ 13 .project
+ 14 .classpath
+ 15 .c9/
+ 16 *.launch
+ 17 .settings/
+ 18 *.sublime-workspace
+ 19
+ 20 # IDE - VSCode
+ 21 .vscode/*
+ 22 !.vscode/settings.json
+ 23 !.vscode/tasks.json
+ 24 !.vscode/launch.json
+ 25 !.vscode/extensions.json
+ 26
+ 27 # misc
+ 28 /.sass-cache
+ 29 /connect.lock
+ 30 /coverage
+ 31 /libpeerconnection.log
+ 32 npm-debug.log
+ 33 yarn-error.log
+ 34 testem.log
+ 35 /typings
+ 36
+ 37 # System Files
+ 38 .DS_Store
+ 39 Thumbs.db
 
