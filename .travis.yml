@@ -1,0 +1,27 @@
+language: node_js
+node_js:
+  - "10"
+
+env:
+  global:
+    secure: pQRIZAIgQoUGcEUHKS8l6ARDrbreSvF+QiprCRwdgSI/y6obQRuQQLRgz9EeJeCBIkdJPxEvQi+oxiXP31z8vgbAIMf4Qe1DcIZeW+cGWlfzw/8XUqdaQ6bK2THcuXNo/m6anqbqucp8Ssod9P3FQofy+iFAU5ZOjAk5I+n/zrZq4ON0BdZJTV4OA6CbgNPa0/PLFUzmWpT13DLB0a2IUdWvU4LvBPQbqJ15fYd96Incmn1qyi1RDbko+fk9Ofy7UD/QXSDE9mXSYaq57L2HETCoscoc1S2RLX5EhFO6hxSd+eX6l++4T046JbpvKBjTVk4KBhDr1I8V51D0C0MvP6jiKr7CGCcVRlGC8po4r4AJ+mpnZ1PkaJ4g8yqJu2ZNaUGdRdrgyiSu7ZXAPtuFQvqxaVQWJJIZqH6lZoa/ESSCc1etvbjF/pOqLBfNoDmZ0AJ7C7hMbBc3FQx34vKHZwxvzLZcSNR2YZ9UwRniRNLbXhtGLCnEUmMGt2PPI5L5trA5lDYTuot8ZtjCYuglQ72u7uUrgtee6FKgbNRsEprWBa/f/nflOCogFblIQjoIPYlXOlumsi20zDM6jhuTTyO2XF84xcU4Kxen3sWtB+9VdD9RYvooBxrjkvjdpDkYj6kmE66O5yLtDvp17xnhyveBQzl4rTgD8qTRnt9tfjA=
+
+before_install:
+  - openssl aes-256-cbc -K $encrypted_33c2a12ca10a_key -iv $encrypted_33c2a12ca10a_iv -in .travis/travis_deploy.pem.enc -out travis_deploy.pem -d
+  - openssl aes-256-cbc -K $encrypted_1fc90f464345_key -iv $encrypted_1fc90f464345_iv -in .travis/config.json.enc -out config.json -d
+
+# before_script:
+#   - npm run build
+
+cache:
+  directories:
+    - node_modules
+
+addons:
+  ssh_known_hosts: $HOST
+
+after_success:
+  - eval "$(ssh-agent -s)" #start the ssh agent
+  - chmod 600 travis_deploy.pem # this key should have push access
+  - ssh-add travis_deploy.pem
+  - rsync -r --delete-after --quiet . root@'"$HOST"':/root/globalchat-expressjs/
