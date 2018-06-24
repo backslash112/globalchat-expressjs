@@ -12,9 +12,6 @@ This software uses code from several open source packages.
 - Node.js
 - [Express.js](https://github.com/expressjs/express/) (Node.js web application framework)
 - Authentication with JWT (JSON Web Token)
-- [Angular 6](https://github.com/angular/angular)
-- [Angular Material 2](https://github.com/angular/material2)
-- JavasSript + [TypesSript](https://github.com/Microsoft/TypeScript)
 - DigitalOcean
 - Continuous Deployment with Travis CI
 - Docker
@@ -30,3 +27,7 @@ or you can do that with Docker:
 ```
 docker run -it --rm  -v "$PWD":/usr/src/app -w /usr/src/app node /bin/bash -c 'npm i && npm test'
 ```
+
+<!-- - [Angular 6](https://github.com/angular/angular)
+- [Angular Material 2](https://github.com/angular/material2)
+- JavasSript + [TypesSript](https://github.com/Microsoft/TypeScript) -->
