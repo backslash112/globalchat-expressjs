@@ -6,8 +6,7 @@ Chat with others in the world, even you can't say their language.
 
 [![Build Status](https://travis-ci.com/backslash112/globalchat-expressjs.svg?token=tyH6w5XwPvDhsxMVozmy&branch=master)](https://travis-ci.com/backslash112/globalchat-expressjs)
 
-##  Skill Points
-This software uses code from several open source packages.
+##  Using Skills
 
 - Node.js
 - [Express.js](https://github.com/expressjs/express/) (Node.js web application framework)
@@ -15,7 +14,8 @@ This software uses code from several open source packages.
 - DigitalOcean
 - Continuous Deployment with Travis CI
 - Docker
-- Unit Test with [Mocha](https://github.com/mochajs/mocha) (a JavaScript test framework running on Node.js 
+- Unit Test with [Mocha](https://github.com/mochajs/mocha) (a JavaScript test framework running on Node.js)
+- [Google Cloud Translation API](https://cloud.google.com/translate/docs/)
 
 ## Tests
 To run the test suite, first install the dependencies, then run npm test:
