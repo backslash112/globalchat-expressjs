@@ -11,15 +11,22 @@ router.post('/', (req, res, next) => {
   console.log(username + ": " + password);
   User.authenticate(username, password, (err, user) => {
     if (err) {
-      return res.json({
+      return res.status(520).json({
         "error": err
       });
     }
-    let token;
+    
     if (user) {
-      token = user.generateToken();
+      console.dir(`generateToken, got user: ${user}`)
+      let token = user.generateToken();
+      console.log(`token: ${token}`)
+      res.json({ data: user, token: token })
+    } else {
+      res.status(520).json({
+        "error": 'unknown error'
+      });
     }
-    res.json({ data: user, token: token })
+    
   });
 });
 

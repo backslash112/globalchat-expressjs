@@ -2,13 +2,13 @@ var express = require('express');
 var router = express.Router();
 
 var User = require('../models/user');
-var auth = require('./middlewares/auth.js');
+var auth = require('../middlewares/auth.js');
 
 // List all users
-router.get('/', auth.loginRequired, auth.validateToken, function (req, res, next) {
+router.get('/', auth.validateToken, auth.loginRequired, function (req, res, next) {
   User.find({}, (err, users) => {
     if (err) {
-      res.json({ error: { message: err } });
+      res.status(520).json({ error: { message: err } });
     } else {
       res.json({ "data": users });
     }
@@ -19,11 +19,14 @@ router.get('/', auth.loginRequired, auth.validateToken, function (req, res, next
 router.post('/', function (req, res, next) {
   let user = new User({
     password: req.body.password,
-    user_name: req.body.userName
+    username: req.body.username
   });
   user.save(err => {
     if (err) {
-      res.json({ error: { code: 520, message: err } });
+      if (err.code == 11000) {
+        return res.status(409).json({ error: { message: 'username already taken' }});
+      }
+      res.status(520).json({ error: { message: err } });
     } else {
       res.json({ data: null });
     }
