@@ -1,9 +1,34 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+var User = require('../models/user');
+var loginRequired = require('./middlewares/login-required.js');
+
+// List all users
+router.get('/', loginRequired, function (req, res, next) {
+  User.find({}, (err, users) => {
+    if (err) {
+      res.json({ error: { message: err } });
+    } else {
+      res.json({ "data": users });
+    }
+  });
+});
+
+// Create a new user
+router.post('/', function (req, res, next) {
+  let user = new User({
+    password: req.body.password,
+    user_name: req.body.userName
+  });
+
+  user.save(err => {
+    if (err) {
+      res.json({ error: { code: 520, message: err } });
+    } else {
+      res.json({ data: null });
+    }
+  });
 });
 
 module.exports = router;
