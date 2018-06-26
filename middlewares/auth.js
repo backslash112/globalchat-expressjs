@@ -1,6 +1,7 @@
 var jwt = require('jsonwebtoken');
 var CONFIG = require('../config.json');
 
+
 function validateToken(req, res, next) {
   let token = req.headers.access_token;
   if (!token) {
@@ -14,4 +15,17 @@ function validateToken(req, res, next) {
     next();
   });
 }
-module.exports = validateToken;
+
+
+function loginRequired(req, res, next) {
+  if (req.user) {
+      next();
+  } else {
+    return res.status(401).json({ error: { message: 'Unauthorized user!' }});
+  }
+}
+
+module.exports = { 
+  loginRequired, 
+  validateToken 
+}

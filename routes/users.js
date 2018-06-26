@@ -2,10 +2,10 @@ var express = require('express');
 var router = express.Router();
 
 var User = require('../models/user');
-var loginRequired = require('./middlewares/login-required.js');
+var auth = require('./middlewares/auth.js');
 
 // List all users
-router.get('/', loginRequired, function (req, res, next) {
+router.get('/', auth.loginRequired, auth.validateToken, function (req, res, next) {
   User.find({}, (err, users) => {
     if (err) {
       res.json({ error: { message: err } });
@@ -21,7 +21,6 @@ router.post('/', function (req, res, next) {
     password: req.body.password,
     user_name: req.body.userName
   });
-
   user.save(err => {
     if (err) {
       res.json({ error: { code: 520, message: err } });
