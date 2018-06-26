@@ -2,5 +2,7 @@
     "dbPort": 0,
     "dbHost":"",
     "dbUser": "",
-    "dbPwd": ""
+    "dbPwd": "",
+    "dbName": "",
+    "secret": ""
 }
