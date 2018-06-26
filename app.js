@@ -3,10 +3,8 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
 var usersRouter = require('./routes/users');
 var tokensRouter = require('./routes/tokens');
-
 var CONFIG = require('./config.json');
 var dbPort = CONFIG.dbPort;
 var dbHost = CONFIG.dbHost;
@@ -15,12 +13,14 @@ var dbPwd = CONFIG.dbPwd;
 var dbName = CONFIG.dbName;
 var mongoose = require('mongoose');
 mongoose.connect(`mongodb://${dbUser}:${dbPwd}@${dbHost}:${dbPort}/${dbName}`);
+const cors = require('cors');
 
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+app.use(cors())
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -28,6 +28,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// set version of API
 var v1 = express.Router();
 v1.use('/users', usersRouter);
 v1.use('/tokens', tokensRouter);
@@ -50,8 +51,8 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-app.listen(3000, () => {
-  console.log('listening on 3000...')
+app.listen(3001, () => {
+  console.log('listening on 3001...')
 });
 
 module.exports = app;
