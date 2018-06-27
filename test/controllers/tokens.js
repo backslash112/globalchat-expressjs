@@ -5,7 +5,7 @@ var expect = chai.expect;
 var should = chai.should();
 
 describe('controllers/tokens.js', () => {
-  before(done => {});
-  after(done => {});
-  it('should ', (done) => {});
+  before(done => { done() });
+  after(done => { done() });
+  it('should ', (done) => { done() });
 });
