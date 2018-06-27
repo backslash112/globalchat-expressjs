@@ -14,13 +14,15 @@ var dbName = CONFIG.dbName;
 var mongoose = require('mongoose');
 mongoose.connect(`mongodb://${dbUser}:${dbPwd}@${dbHost}:${dbPort}/${dbName}`);
 const cors = require('cors');
-
+const https = require('https');
+var helmet = require('helmet')
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(cors())
+app.use(helmet())
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -54,5 +56,10 @@ app.use(function(err, req, res, next) {
 app.listen(3001, () => {
   console.log('listening on 3001...')
 });
+const options = {
+  cert: fs.readFileSync('./sslcert/fullchain.pem'),
+  key: fs.readFileSync('./sslcert/privkey.pem')
+};
+https.createServer(options, app).listen(8443);
 
 module.exports = app;
