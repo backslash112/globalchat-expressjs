@@ -73,15 +73,15 @@ router.delete('/:id/requests', function (req, res, next) {
 
 // Unfriend with a particular user
 router.delete('/:id', function (req, res, next) {
-  User.findOneAndUpdate({ email: req.user.email },
-    { $pull: { friends: { _id: req.params._id } } }, (err, user) => {
-      if (err) return handleError(err, res);
-      User.findByIdAndUpdate(req.params._id,
-        { $pull: { friends: { email: req.user.email } } }, (err, user) => {
-          if (err) return handleError(err, res);
-          res.json({ data: null });
-        }); // end User.findByIdAndUpdate
-    }); // end User.findOneAndUpdate
+  // User.findOneAndUpdate({ email: req.user.email },
+  //   { $pull: { friends: { _id: req.params._id } } }, (err, user) => {
+  //     if (err) return handleError(err, res);
+  //     User.findByIdAndUpdate(req.params._id,
+  //       { $pull: { friends: { email: req.user.email } } }, (err, user) => {
+  //         if (err) return handleError(err, res);
+  //         res.json({ data: null });
+  //       }); // end User.findByIdAndUpdate
+  //   }); // end User.findOneAndUpdate
 
 
   // Test if this style works
@@ -96,6 +96,20 @@ router.delete('/:id', function (req, res, next) {
   // .catch(err => {
   //   return handleError(err, res);
   // });
+
+  try {
+    let currentUser = await User.findOneAndUpdate({ email: req.user.email }, { $pull: { friends: { _id: rq.params.id } } });
+    let friend = await User.findByIdAndUpdate(req.params.id, { $pull: { friends: { _id: currentUser._id } } });
+    if (!currentUser && !friend) {
+      res.status(404).json({ error: { message: 'delete faild!' } });
+    } else {
+      res.json({ data: friend });
+    }
+  } catch (err) {
+    handleError(err, res);
+  }
+
+
 });
 
 module.exports = router;
