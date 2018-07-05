@@ -82,6 +82,20 @@ router.delete('/:id', function (req, res, next) {
           res.json({ data: null });
         }); // end User.findByIdAndUpdate
     }); // end User.findOneAndUpdate
+
+
+  // Test if this style works
+  // User.findOneAndUpdate({ email: req.user.email },
+  //   { $pull: { friends: { _id: req.params._id } } })
+  // .then(() => {
+  //   return User.findByIdAndUpdate(req,params._id, { $pull: { friends: { email: req.user.email } } });
+  // })
+  // .then(() => {
+  //   res.json({ data: null });
+  // })
+  // .catch(err => {
+  //   return handleError(err, res);
+  // });
 });
 
 module.exports = router;
