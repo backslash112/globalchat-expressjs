@@ -1,17 +1,17 @@
 var mongoose = require('mongoose');
+var userSchame = require('../models/user').schema;
 
 var requestSchema = new mongoose.Schema({
   from: {
-    user: {
-      email: String, 
-      username: String, 
-      first_name: String, 
-      last_name: String
-    }
+    user: userSchame
+  },
+  to: {
+    user: userSchame
   },
   message: String,
   created_at: Date,
-  updated_at: Date
+  updated_at: Date,
+  status: String
 });
 
 //run functions before saving:

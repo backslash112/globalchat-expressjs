@@ -69,6 +69,9 @@ userSchema.methods.generateToken = function () {
     user: {
       _id: this._id,
       username: this.username,
+      email: this.email,
+      first_name: this.first_name,
+      last_name: this.last_name,
       exp: Math.floor(Date.now() / 1000) + (60 * 60)
     }
   }, CONFIG.secret);
