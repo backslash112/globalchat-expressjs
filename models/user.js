@@ -12,7 +12,13 @@ var userSchema = new mongoose.Schema({
   created_at: Date,
   updated_at: Date,
   gender: String,
-  age: Number
+  age: Number,
+  friends: [{
+    username: String,
+    email: String,
+    first_name: String,
+    last_name: String
+  }]
 });
 
 //run functions before saving:
