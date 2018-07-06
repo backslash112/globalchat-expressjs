@@ -5,7 +5,7 @@ node_js:
 env:
   global:
     secure: "X1CXlb1X02VKjuRzqp7xdQLyJqy9oO25JfeRLKyD9uNsfunvuxmtHIaabpN/BJYcb/pnzKVEXvhkrjFLuwBwqptF7a70Y8zmx0UMT9b9BJwNacMdd/39ZgNpPAmo33mqufbdqmL3wc816puoqbYcoHGqA89rNDPRtVDoQf2eYMjk2sfExFuN30KFXDlKjhfNSKRjO3QEbYM6GAWB8HzdKQmFo+UarkXTjal1s0QHoS7VOOckHvgHRpIozO8wr5GJ3pK82JZ55fKuWwFWoFiRs36Pq5MBcboZ6bu4mnAt3VkFPNHn5TZkoJwaauG6jS+kj/18BL+o+CnWDW/yt1cS75zfIvHTJyAo7V0zXC7wdyHyxJLi1U88W3e0b7mH3lvCs01nI97YhCBNq7W/eqtwxjefJrnW2d5HetsLmQahkRS/EaU8etP7aTvK/5au7xGarncEf9mRiJ//DMjBASmUFhwD6VM7TyVkb2Aux+I/53DPA9yWXnPYTE5ia3TkiTzVTegNWIYP5JC8V2tctxsRx15y5NGN2FKmHGdZWzNUOo4iaUGj0qzKNeSZJfU/gTzJOldal12kX7MvOA6GZBhWfEB0CnmLvQqpJeljcWraw/42SeSlEzgIBg+k7+en95+QCog1+8BZXbgB5a+2pwfxQKhoULnUx4jaoUv2gEnVcuw="
-
+    secure: "RXCHgrXDKZaUtgiRGtCCGcLuS9hWSMmJS353JhKMQM8DuBP9OShrajVhdd0f16fkUb+IrUXXMdwB7jEHH4R2Poa8auwrs3EreZ8r5TRAzqHyL6MxAM6rDjlvpQdwvr2UUWHz2ifrvJBbfpe3h8kvlYcvoOeKbA9rHObtDidYzD8eEIcJonMWLxAg6X1e7Yo1NZIok2Ktez0jmZCkSnKGF7j8x5VVsm594azdBopNyz3HYjM6KJpr5VP+2f05oS170hKVu1nIvYB+waozD04QxCoU5j4VQTMOtLI8kJzTvEDuGY1QznoaZJYlyIkFkGzfdZMzzfovbOqAiB95Q2dOxd4viXS7KFmTxr2guyqF4BYErOwhMtsRaXZh439NKEzyKM2cTgtavjzqc00MBfz/m9pkXZyXB65adylfN7SCuzenSaIc1nYiRbHuZoRbHAwEReW8hD00Jf9vVIHh7IhKnDTIEZhll0fED6LwMYBBz9bBdlxZPNSffpkdgDVI9j0cT/7c3jsQXRJpjoKZdQJpTILhYHkw5BmqQwUPYI8iT/cECkBTXo1yf6OW5xqSkm+2OaxP6bG5RshTz2wJUyy+dyE9O4LGgfFImMCLhHt3ioqQslZcZkhOOJkoSx62x3y8zKjh/QOpAHUK9y3jteEBxypU91qBrjNO3W7tNWC2sEI="
 before_install:
   - openssl aes-256-cbc -K $encrypted_33c2a12ca10a_key -iv $encrypted_33c2a12ca10a_iv -in .travis/secrets.tar.enc -out secrets.tar -d
   - tar xvf secrets.tar
@@ -19,10 +19,12 @@ cache:
 # addons:
 #   ssh_known_hosts: ${HOST}
 before_script:
-  - echo -e "Host ${HOST}\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+  # - echo -e "Host ${HOST}\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+  - echo -e "Host ${APIHOST}\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 
 after_success:
   - eval "$(ssh-agent -s)" #start the ssh agent
   - chmod 600 travis_deploy.pem # this key should have push access
   - ssh-add travis_deploy.pem
-  - rsync -r --delete-after --quiet . root@${HOST}:/root/globalchat-expressjs/
+  # - rsync -r --delete-after --quiet . root@${HOST}:/root/globalchat-expressjs/
+  - rsync -r --delete-after --quiet . root@${APIHOST}:/root/release/globalchat-expressjs/

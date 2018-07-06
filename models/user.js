@@ -2,39 +2,35 @@ var mongoose = require('mongoose');
 var bcrypt = require('bcrypt');
 var jwt = require('jsonwebtoken');
 var CONFIG = require('../config.json');
+var Promise = require('bluebird');
 
 var userSchema = new mongoose.Schema({
   first_name: String,
   last_name: String,
-  email: String,
-  username: { type: String, index: true, unique: true },
+  email: { type: String, index: true, unique: true },
   password: { type: String, required: true },
   created_at: Date,
   updated_at: Date,
   gender: String,
-  age: Number
+  age: Number,
+  friends: [{
+    email: String,
+    first_name: String,
+    last_name: String
+  }]
 });
 
-//run functions before saving:
+//run functions before save
 userSchema.pre('save', function (next) {
   var user = this;
-
   var currentDate = new Date();
   user.updated_at = currentDate;
   if (!user.created_at) user.created_at = currentDate;
-
-  // hashing a password before saving it to the database
-  bcrypt.hash(user.password, 10, function (err, hash) {
-    if (err) {
-      return next(err);
-    }
-    user.password = hash;
-    next();
-  })
+  next();
 });
 
-userSchema.statics.authenticate = function (username, password, callback) {
-  this.findOne({ username: username }, function (err, user) {
+userSchema.statics.authenticate = function (email, password, callback) {
+  this.findOne({ email: email }, function (err, user) {
     if (err) {
       return callback(err)
     } else if (!user) {
@@ -55,6 +51,23 @@ userSchema.statics.authenticate = function (username, password, callback) {
   });
 }
 
+userSchema.methods.hashPassword = function () {
+  // hashing a password before saving it to the database
+  return new Promise(function (resolve, reject) {
+    let user = this;
+    console.log('bcrypt.hash:');
+    console.log(user);
+    bcrypt.hash(user.password, 10, function (err, hash) {
+      if (err) {
+        reject(err);
+      } else {
+        user.password = hash;
+        resolve(user);
+      }
+    });
+  }.bind(this)); // fix 'this' 
+}
+
 // https://stackoverflow.com/a/36795534/2195426
 // userSchema.methods.generateToken = () => {
 userSchema.methods.generateToken = function () {
@@ -62,7 +75,9 @@ userSchema.methods.generateToken = function () {
   return jwt.sign({
     user: {
       _id: this._id,
-      username: this.username,
+      email: this.email,
+      first_name: this.first_name,
+      last_name: this.last_name,
       exp: Math.floor(Date.now() / 1000) + (60 * 60)
     }
   }, CONFIG.secret);

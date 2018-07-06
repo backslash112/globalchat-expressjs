@@ -5,6 +5,10 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var usersRouter = require('./routes/users');
 var tokensRouter = require('./routes/tokens');
+var cors = require('cors');
+var helmet = require('helmet')
+var fs = require('fs');
+
 var CONFIG = require('./config.json');
 var dbPort = CONFIG.dbPort;
 var dbHost = CONFIG.dbHost;
@@ -13,10 +17,7 @@ var dbPwd = CONFIG.dbPwd;
 var dbName = CONFIG.dbName;
 var mongoose = require('mongoose');
 mongoose.connect(`mongodb://${dbUser}:${dbPwd}@${dbHost}:${dbPort}/${dbName}`);
-const cors = require('cors');
-const https = require('https');
-var helmet = require('helmet')
-var fs = require('fs');
+
 var app = express();
 
 // view engine setup
@@ -51,16 +52,34 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.json({ "error": err });
 });
 
-app.listen(80, () => {
-  console.log('listening on 80...')
-});
+
+var httpServer = require('http').createServer(app);
 const options = {
   cert: fs.readFileSync('./sslcert/fullchain.pem'),
   key: fs.readFileSync('./sslcert/privkey.pem')
 };
-https.createServer(options, app).listen(443, () => { console.log('https listening on 443...') });
+var httpsServer = require('https').createServer(options, app)
+var io = require('socket.io')(httpServer)
 
+httpServer.listen(80, () => {
+  console.log('http listening on 80...')
+});
+
+httpsServer.listen(443, () => { 
+  console.log('https listening on 443...') 
+});
+
+io.of('/chat').on('connection', socket => {
+  console.log('someone connected!');
+  socket.on('msg', data => {
+    console.log('reviced new message: ' + data);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('disconnected!');
+  });
+})
 module.exports = app;
