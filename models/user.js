@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var bcrypt = require('bcrypt');
 var jwt = require('jsonwebtoken');
 var CONFIG = require('../config.json');
+var Promise = require('bluebird');
 
 var userSchema = new mongoose.Schema({
   first_name: String,
@@ -52,14 +53,19 @@ userSchema.statics.authenticate = function (email, password, callback) {
 
 userSchema.methods.hashPassword = function () {
   // hashing a password before saving it to the database
-  let user = this;
-  bcrypt.hash(user.password, 10, function (err, hash) {
-    if (err) {
-      throw err;
-    } else {
-      user.password = hash;
-    }
-  })
+  return new Promise(function (resolve, reject) {
+    let user = this;
+    console.log('bcrypt.hash:');
+    console.log(user);
+    bcrypt.hash(user.password, 10, function (err, hash) {
+      if (err) {
+        reject(err);
+      } else {
+        user.password = hash;
+        resolve(user);
+      }
+    });
+  }.bind(this)); // fix 'this' 
 }
 
 // https://stackoverflow.com/a/36795534/2195426
