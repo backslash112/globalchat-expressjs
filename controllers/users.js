@@ -6,8 +6,9 @@ var User = require('../models/user');
 
 function save(user) {
   return new Promise(function (resolve, reject) {
-    user.hashPassword();
-    user.save()
+    // let hashPassword = user.hashPassword.bind(user);
+    user.hashPassword()
+      .then(user => user.save())
       .then(user => {
         resolve(user);
       })
@@ -45,8 +46,8 @@ function addFriend(user1, user2) {
   user2.friends.push(user1);
   return new Promise(function (resolve, reject) {
     Promise.join(user1.save(), user2.save())
-      .then((user1, user2) => {
-        resolve([user1, user2]);
+      .then((users) => {
+        resolve(users);
       })
       .catch(err => {
         reject(err);
@@ -54,19 +55,23 @@ function addFriend(user1, user2) {
   });
 }
 
-function unFriend(user, friend) {
+function unFriend(user1, user2) {
   return new Promise(function (resolve, reject) {
-    const index = user.friends.findIndex(f => f.email === friend.email);
+    let index = user1.friends.findIndex(f => f.email === user2.email);
     if (index < 0)
-      return reject(new Error("No such friend"));
-    user.friends.splice(index, 1);
-    user.save()
-      .then(user => {
-        resolve(user);
+      return reject(new Error('friend not found'));
+    user1.friends.splice(index, 1);
+    index = user2.friends.findIndex(f => f.email === user1.email);
+    if (index < 0)
+      return reject(new Error('friend not found'));
+    user2.friends.splice(index, 1);
+    Promise.join(user1.save(), user2.save())
+      .then(users => {  // notice the different between 'then(users)' and join(user1.save(), user2.save(), function(user1, user2))
+        resolve(users);
       })
       .catch(err => {
         reject(err);
-      });
+      })
   });
 }
 

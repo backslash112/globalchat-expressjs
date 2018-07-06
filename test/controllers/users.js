@@ -4,6 +4,7 @@ var chai = require('chai');
 var expect = chai.expect;
 const app = require('../../app');
 var supertest = require('supertest');
+var Promise = require('bluebird');
 
 
 describe('controllers/users.js', () => {
@@ -18,24 +19,27 @@ describe('controllers/users.js', () => {
   });
 
   before(done => {
-    controller.save(user1)
-      .then(user => {
-        // expect(user).to.have.property('_id').with.lengthOf(24);
-        expect(user).to.have.property('email').with.lengthOf(user1.email.length);
-        user1 = user;
-        return controller.save(user2);
-      })
-      .then(user => {
-        user2 = user;
-        done();
+    // controller.save(user1)
+    //   .then(user => {
+    //     expect(user).to.have.property('email').with.lengthOf(user1.email.length);
+    //     user1 = user;
+    //     return controller.save(user2);
+    //   })
+    //   .then(user => {
+    //     user2 = user;
+    //     done();
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //     done();
+    //   })
 
-        console.log(`user1: ${user1}`);
-        console.log(`user2: ${user2}`);
-      })
-      .catch(err => {
-        console.log(err);
-        done();
-      })
+
+    Promise.join(controller.save(user1), controller.save(user2), function(u1, u2) {
+      user1 = u1;
+      user2 = u2;
+      done();
+    });
   });
 
   after(done => {
@@ -57,6 +61,7 @@ describe('controllers/users.js', () => {
         users.map(function (user) {
           expect(user.friends).to.have.lengthOf(1);
         });
+        done();
       })
       .catch(err => {
         console.log(err);
@@ -64,17 +69,20 @@ describe('controllers/users.js', () => {
       });
   });
 
-  // it('should remove friend from friend list.', (done) => {
-  //   controller.unFriend(user1, user2)
-  //     .then(friend => {
-  //       expect(friend.friends).to.be.empty
-  //       done();
-  //     })
-  //     .catch(err => {
-  //       console.log(err);
-  //       done()
-  //     });
-  // });
+  it('should remove friend from friend list.', (done) => {
+    controller.unFriend(user1, user2)
+      .then(users => {
+        expect(users).to.have.lengthOf(2);
+        users.map(function (user) {
+          expect(user.friends).to.be.empty;
+        });
+        done();
+      })
+      .catch(err => {
+        console.log(err);
+        done();
+      });
+  });
 
   // it('should find the user by a correct email.', done => {
   //   controller.getUserByEmail(user1.email)
