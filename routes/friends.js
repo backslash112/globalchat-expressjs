@@ -97,17 +97,17 @@ router.delete('/:id', function (req, res, next) {
   //   return handleError(err, res);
   // });
 
-  try {
-    let currentUser = await User.findOneAndUpdate({ email: req.user.email }, { $pull: { friends: { _id: rq.params.id } } });
-    let friend = await User.findByIdAndUpdate(req.params.id, { $pull: { friends: { _id: currentUser._id } } });
-    if (!currentUser && !friend) {
-      res.status(404).json({ error: { message: 'delete faild!' } });
-    } else {
-      res.json({ data: friend });
-    }
-  } catch (err) {
-    handleError(err, res);
-  }
+  // try {
+  //   let currentUser = await User.findOneAndUpdate({ email: req.user.email }, { $pull: { friends: { _id: rq.params.id } } });
+  //   let friend = await User.findByIdAndUpdate(req.params.id, { $pull: { friends: { _id: currentUser._id } } });
+  //   if (!currentUser && !friend) {
+  //     res.status(404).json({ error: { message: 'delete faild!' } });
+  //   } else {
+  //     res.json({ data: friend });
+  //   }
+  // } catch (err) {
+  //   handleError(err, res);
+  // }
 
 
 });

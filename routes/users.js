@@ -19,12 +19,12 @@ router.get('/', auth.validateToken, auth.loginRequired, function (req, res, next
 router.post('/', function (req, res, next) {
   let user = new User({
     password: req.body.password,
-    username: req.body.username
+    email: req.body.email
   });
   user.save(err => {
     if (err) {
       if (err.code == 11000) {
-        return res.status(409).json({ error: { message: 'username already taken' }});
+        return res.status(409).json({ error: { message: 'email already taken' }});
       }
       res.status(520).json({ error: { message: err } });
     } else {
