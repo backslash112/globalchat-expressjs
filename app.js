@@ -40,12 +40,12 @@ app.use('/v1', v1);
 app.use('/', v1);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -68,18 +68,31 @@ httpServer.listen(80, () => {
   console.log('http listening on 80...')
 });
 
-httpsServer.listen(443, () => { 
-  console.log('https listening on 443...') 
+httpsServer.listen(443, () => {
+  console.log('https listening on 443...')
 });
 
 io.of('/chat').on('connection', socket => {
-  console.log('someone connected!');
-  socket.on('msg', data => {
-    console.log('reviced new message: ' + data);
+  //console.log('>connected!');
+  socket.on('join', data => {
+    // console.log('joined room: ' + data.room);
+    socket.join(data.room);
+    socket.emit('joined');
+  });
+  socket.on('leave', data => {
+    // console.log('leaved room: ' + data.room);
+    socket.leave(data.room);
+    socket.emit('leaved');
+  });
+
+  socket.on('send_msg', data => {
+    socket.emit('sent');
+    // console.log(`send msg[${data.msg}] to room[${data.to}] via [new_msg]`);
+    socket.in(data.to).emit('new_msg', { msg: data.msg });
   });
 
   socket.on('disconnect', () => {
-    console.log('disconnected!');
+    // console.log('>disconnected!');
   });
 })
 module.exports = app;

@@ -1,9 +1,9 @@
-var chatRouter = require('../../routes/chats');
+var chat = require('../../models/chat');
 var chai = require('chai');
 var expect = chai.expect;
 var should = chai.should();
 
-describe('routes/users.js', () => {
+describe('models/chat.test.js', () => {
   before(done => { done() });
   after(done => { done() });
   it('should ', (done) => { done() });

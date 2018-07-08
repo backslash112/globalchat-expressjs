@@ -55,8 +55,8 @@ userSchema.methods.hashPassword = function () {
   // hashing a password before saving it to the database
   return new Promise(function (resolve, reject) {
     let user = this;
-    console.log('bcrypt.hash:');
-    console.log(user);
+    // console.log('bcrypt.hash:');
+    // console.log(user);
     bcrypt.hash(user.password, 10, function (err, hash) {
       if (err) {
         reject(err);

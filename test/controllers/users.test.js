@@ -7,7 +7,7 @@ var supertest = require('supertest');
 var Promise = require('bluebird');
 
 
-describe('controllers/users.js', () => {
+describe('controllers/users.test.js', () => {
 
   let user1 = new User({
     email: 'user1@gmail.com',
@@ -19,22 +19,6 @@ describe('controllers/users.js', () => {
   });
 
   before(done => {
-    // controller.save(user1)
-    //   .then(user => {
-    //     expect(user).to.have.property('email').with.lengthOf(user1.email.length);
-    //     user1 = user;
-    //     return controller.save(user2);
-    //   })
-    //   .then(user => {
-    //     user2 = user;
-    //     done();
-    //   })
-    //   .catch(err => {
-    //     console.log(err);
-    //     done();
-    //   })
-
-
     Promise.join(controller.save(user1), controller.save(user2), function(u1, u2) {
       user1 = u1;
       user2 = u2;
@@ -43,8 +27,8 @@ describe('controllers/users.js', () => {
   });
 
   after(done => {
-    //user1.email, user2.email
-    User.deleteMany({ email: { $in: [] } })
+    //
+    User.deleteMany({ email: { $in: [user1.email, user2.email] } })
       .then(() => {
         done();
       })
@@ -83,17 +67,5 @@ describe('controllers/users.js', () => {
         done();
       });
   });
-
-  // it('should find the user by a correct email.', done => {
-  //   controller.getUserByEmail(user1.email)
-  //     .then(user => {
-  //       expect(user.email).to.equal(user1.email);
-  //       done();
-  //     })
-  //     .catch(err => {
-  //       console.log(err);
-  //       done();
-  //     })
-  // });
 
 });
