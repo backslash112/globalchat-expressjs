@@ -64,8 +64,8 @@ var httpServer = require('http').createServer(app);
 // var httpsServer = require('https').createServer(options, app)
 var io = require('socket.io')(httpServer)
 
-httpServer.listen(80, () => {
-  console.log('http listening on 80...')
+httpServer.listen(8080, () => {
+  console.log('http listening on 8080...')
 });
 
 // httpsServer.listen(443, () => {

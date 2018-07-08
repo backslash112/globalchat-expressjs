@@ -5,7 +5,7 @@ var io = require('socket.io-client');
 
 describe('app.js', () => {
 
-  var socketURL = "http://0.0.0.0:80/chat";
+  var socketURL = "http://0.0.0.0:8080/chat";
   let user1 = { email: 'user1@gmail.com' };
   let user2 = { email: 'user2@gmail.com' };
   let client1;
