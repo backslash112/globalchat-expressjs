@@ -57,20 +57,20 @@ app.use(function (err, req, res, next) {
 
 
 var httpServer = require('http').createServer(app);
-const options = {
-  cert: fs.readFileSync('./sslcert/fullchain.pem'),
-  key: fs.readFileSync('./sslcert/privkey.pem')
-};
-var httpsServer = require('https').createServer(options, app)
+// const options = {
+//   cert: fs.readFileSync('./sslcert/fullchain.pem'),
+//   key: fs.readFileSync('./sslcert/privkey.pem')
+// };
+// var httpsServer = require('https').createServer(options, app)
 var io = require('socket.io')(httpServer)
 
 httpServer.listen(80, () => {
   console.log('http listening on 80...')
 });
 
-httpsServer.listen(443, () => {
-  console.log('https listening on 443...')
-});
+// httpsServer.listen(443, () => {
+//   console.log('https listening on 443...')
+// });
 
 io.of('/chat').on('connection', socket => {
   //console.log('>connected!');
