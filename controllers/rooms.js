@@ -76,9 +76,21 @@ function saveMessageByRoom(room, message) {
   });
 }
 
+function deleteRoomById(roomId) {
+  return new Promise(function (resolve, reject) {
+    Room.deleteOne({ roomId: roomId })
+      .then(() => {
+        resolve();
+      })
+      .catch(err => {
+        reject(err);
+      })
+  });
+}
 module.exports = {
   getRoomByParticipators,
   saveMessageByRoom,
   saveMessageByRoomId,
-  getRoomById
+  getRoomById,
+  deleteRoomById
 }

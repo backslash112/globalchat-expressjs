@@ -4,14 +4,20 @@ var chai = require('chai');
 var expect = chai.expect;
 
 describe('controllers/rooms.test.js', () => {
-  before(done => { done() });
-  after(done => { done() });
 
   let user1 = { email: 'user1@gmail.com' };
   let user2 = { email: 'user2@gmail.com' };
   let expectRoomId = user1.email > user2.email
     ? user1.email + user2.email
     : user2.email + user1.email
+
+  before(done => { done() });
+  after(done => {
+    controller.deleteRoomById(expectRoomId)
+      .then(() => {
+        done();
+      })
+  });
 
 
   it('should can get a room by two participators', done => {
@@ -25,13 +31,13 @@ describe('controllers/rooms.test.js', () => {
 
   it('should can get a room object from DB by an exist roomId', done => {
     controller.getRoomById(expectRoomId)
-    .then(room => {
-      console.log('got room:');
-      expect(room).to.not.be.null;
-      expect(room).to.have.property('roomId');
-      expect(room.roomId).to.equal(expectRoomId);
-      done();
-    })
+      .then(room => {
+        console.log('got room:');
+        expect(room).to.not.be.null;
+        expect(room).to.have.property('roomId');
+        expect(room.roomId).to.equal(expectRoomId);
+        done();
+      })
   });
   it('should can save message to room', done => {
     const message = {
