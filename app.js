@@ -73,26 +73,26 @@ httpServer.listen(8080, () => {
 // });
 
 io.of('/chat').on('connection', socket => {
-  //console.log('>connected!');
+  console.log('>connected!');
   socket.on('join', data => {
-    // console.log('joined room: ' + data.room);
+    console.log('joined room: ' + data.room);
     socket.join(data.room);
     socket.emit('joined');
   });
   socket.on('leave', data => {
-    // console.log('leaved room: ' + data.room);
+    console.log('leaved room: ' + data.room);
     socket.leave(data.room);
     socket.emit('leaved');
   });
 
   socket.on('send_msg', data => {
     socket.emit('sent');
-    // console.log(`send msg[${data.msg}] to room[${data.to}] via [new_msg]`);
+    console.log(`send msg[${data.msg}] to room[${data.to}] via [new_msg]`);
     socket.in(data.to).emit('new_msg', { msg: data.msg });
   });
 
   socket.on('disconnect', () => {
-    // console.log('>disconnected!');
+    console.log('>disconnected!');
   });
 })
 module.exports = app;
