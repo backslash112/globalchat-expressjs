@@ -85,10 +85,10 @@ io.of('/chat').on('connection', socket => {
     socket.emit('leaved');
   });
 
-  socket.on('send_msg', data => {
+  socket.on('send_message', data => {
     socket.emit('sent');
-    console.log(`send msg[${data.msg}] to room[${data.to}] via [new_msg]`);
-    socket.in(data.to).emit('new_msg', { msg: data.msg });
+    console.log(`send message[${data.message}] to room[${data.to}] via [new_message]`);
+    socket.in(data.to).emit('new_message', { message: data.message, from: data.from });
   });
 
   socket.on('disconnect', () => {
