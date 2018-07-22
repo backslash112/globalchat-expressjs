@@ -79,10 +79,23 @@ chat.on('connection', socket => {
     const user = data.user;
     console.log('joined room: ' + user.email);
     socket.join(user.email);
+
+    // Save the user to his socket object
+    socket['user'] = user;
+    
     // socket.emit('joined', data);
     chat.emit('joined', user);
-
+    
+    // Gets a list of client IDs connected to this namespace 
+    // via namespace.clients(callback) method: https://socket.io/docs/server-api/#namespace-clients-callback
+    chat.clients((err, clients) => {
+      console.log(clients);
+      for (const id of clients) {
+        console.log(chat.connected[id].user);
+      }
+    });
   });
+  
   socket.on('leave', data => {
     const user = data.user;
     console.log('leaved room: ' + user.email);
