@@ -28,6 +28,11 @@ or you can do that with Docker:
 docker run -it --rm  -v "$PWD":/usr/src/app -w /usr/src/app node /bin/bash -c 'npm i && npm test'
 ```
 
+## Run
+```
+docker run -it --rm -p 8080:8080 -v "$PWD":/usr/src/app -w /usr/src/app node /bin/bash -c ' npm i nodemon -g && nodemon app.js'
+```
+
 <!-- - [Angular 6](https://github.com/angular/angular)
 - [Angular Material 2](https://github.com/angular/material2)
 - JavasSript + [TypesSript](https://github.com/Microsoft/TypeScript) -->
