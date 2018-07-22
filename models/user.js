@@ -5,27 +5,28 @@ var CONFIG = require('../config.json');
 var Promise = require('bluebird');
 
 var userSchema = new mongoose.Schema({
-  first_name: String,
-  last_name: String,
+  firstName: String,
+  lastName: String,
   email: { type: String, index: true, unique: true },
   password: { type: String, required: true },
-  created_at: Date,
-  updated_at: Date,
+  createdAt: Date,
+  updatedAt: Date,
   gender: String,
   age: Number,
   friends: [{
     email: String,
-    first_name: String,
-    last_name: String
-  }]
+    firstName: String,
+    lastName: String
+  }],
+  language: String
 });
 
 //run functions before save
 userSchema.pre('save', function (next) {
   var user = this;
   var currentDate = new Date();
-  user.updated_at = currentDate;
-  if (!user.created_at) user.created_at = currentDate;
+  user.updatedAt = currentDate;
+  if (!user.createdAt) user.createdAt = currentDate;
   next();
 });
 
@@ -76,8 +77,8 @@ userSchema.methods.generateToken = function () {
     user: {
       _id: this._id,
       email: this.email,
-      first_name: this.first_name,
-      last_name: this.last_name,
+      firstName: this.firstName,
+      lastName: this.lastName,
       exp: Math.floor(Date.now() / 1000) + (60 * 60)
     }
   }, CONFIG.secret);

@@ -5,7 +5,7 @@ var io = require('socket.io-client');
 
 describe('app.js', () => {
 
-  var socketURL = "http://0.0.0.0:80/chat";
+  var socketURL = "http://0.0.0.0:8080/chat";
   let user1 = { email: 'user1@gmail.com' };
   let user2 = { email: 'user2@gmail.com' };
   let client1;
@@ -45,44 +45,44 @@ describe('app.js', () => {
     client1.emit('leave', { room: user1.email });
   });
 
-  it('should can send msg to a room', done => {
+  it('should can send message to a room', done => {
     client1.on('sent', () => {
       done();
     });
-    client1.emit('send_msg', { to: user2.email });
+    client1.emit('send_message', { to: user2.email });
   });
 
 
-  it('should can receive msg from other via room', done => {
-    const msg = 'hello, my name is user1.';
+  it('should can receive message from other via room', done => {
+    const message = 'hello, my name is user1.';
     client2.on('joined', () => {
-      client1.emit('send_msg', { to: user2.email, msg: msg });
+      client1.emit('send_message', { to: user2.email, message: message });
     });
     client2.emit('join', { room: user2.email });
-    client2.on('new_msg', data => {
-      expect(data.msg).to.equal(msg);
+    client2.on('new_message', data => {
+      expect(data.message).to.equal(message);
       done();
     });
   });
 
-  it('should not can receive msg from other via room after leave that room', done => {
-    let numMsgs = 0;
-    client2.on('new_msg', data => {
-      numMsgs++;
+  it('should not can receive message from other via room after leave that room', done => {
+    let nummessages = 0;
+    client2.on('new_message', data => {
+      nummessages++;
       client2.emit('leave', { room: user2.email });
     });
 
     client2.on('joined', () => {
-      client1.emit('send_msg', { to: user2.email, msg: '' });
+      client1.emit('send_message', { to: user2.email, message: '' });
     });
     client2.on('leaved', () => {
-      client1.emit('send_msg', { to: user2.email, msg: '' });
+      client1.emit('send_message', { to: user2.email, message: '' });
     });
 
     client2.emit('join', { room: user2.email });
 
     setTimeout(() => {
-      expect(numMsgs).to.equal(1);
+      expect(nummessages).to.equal(1);
       done();
     }, 1000);
 

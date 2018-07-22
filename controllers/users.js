@@ -75,10 +75,22 @@ function unFriend(user1, user2) {
   });
 }
 
+function validateEmail(email) {
+  return new Promise(function (resolve, reject) {
+    User.findOne({ email: email })
+      .then(user => {
+        resolve(user);
+      })
+      .catch(err => {
+        reject(err);
+      })
+  })
+}
 module.exports = {
   save,
   getUserById,
   getUserByEmail,
   addFriend,
-  unFriend
+  unFriend,
+  validateEmail
 }

@@ -9,8 +9,8 @@ var requestSchema = new mongoose.Schema({
     user: userSchame
   },
   message: String,
-  created_at: Date,
-  updated_at: Date,
+  createdAt: Date,
+  updatedAt: Date,
   status: String
 });
 
@@ -18,8 +18,8 @@ var requestSchema = new mongoose.Schema({
 requestSchema.pre('save', function (next) {
   var request = this;
   var currentDate = new Date();
-  request.updated_at = currentDate;
-  if (!request.created_at) request.created_at = currentDate;
+  request.updatedAt = currentDate;
+  if (!request.createdAt) request.createdAt = currentDate;
   next()
 });
 
