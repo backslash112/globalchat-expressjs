@@ -12,6 +12,7 @@ var fs = require('fs');
 var CONFIG = require('./config.json');
 var dbPort = CONFIG.dbPort;
 var dbHost = CONFIG.dbHost;
+
 var dbUser = CONFIG.dbUser;
 var dbPwd = CONFIG.dbPwd;
 var dbName = CONFIG.dbName;
@@ -71,22 +72,28 @@ httpServer.listen(8080, () => {
 // httpsServer.listen(443, () => {
 //   console.log('https listening on 443...')
 // });
-
-io.of('/chat').on('connection', socket => {
+const chat = io.of('/chat');
+chat.on('connection', socket => {
   console.log('>connected!');
   socket.on('join', data => {
-    console.log('joined room: ' + data.room);
-    socket.join(data.room);
-    socket.emit('joined');
+    const user = data.user;
+    console.log('joined room: ' + user.email);
+    socket.join(user.email);
+    // socket.emit('joined', data);
+    chat.emit('joined', user);
+
   });
   socket.on('leave', data => {
-    console.log('leaved room: ' + data.room);
-    socket.leave(data.room);
-    socket.emit('leaved');
+    const user = data.user;
+    console.log('leaved room: ' + user.email);
+    socket.leave(user.email);
+    // socket.emit('leaved');
+    chat.emit('leaved', user);
   });
 
   socket.on('send_message', data => {
     socket.emit('sent');
+
     console.log(`send message[${data.message}] to room[${data.to}] via [new_message]`);
     socket.in(data.to).emit('new_message', { message: data.message, from: data.from });
   });
@@ -95,4 +102,5 @@ io.of('/chat').on('connection', socket => {
     console.log('>disconnected!');
   });
 })
+
 module.exports = app;
