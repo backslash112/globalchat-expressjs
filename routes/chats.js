@@ -12,7 +12,16 @@ router.get("/online-users", function (req, res, next) {
         users.push(user);
       }
     }
-    res.json(users);
+
+    // remove duplicate items
+    users = users.filter((obj, index, users) => {
+      return users.map(user => user['email']).indexOf(obj['email']) === index;
+    });
+    // remove current user
+    // users = users.filter(user => {
+    //   return user.email != req.user.email
+    // });
+    res.json({ data: users });
   });
 });
 

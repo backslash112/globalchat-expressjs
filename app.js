@@ -131,11 +131,11 @@ chat.on('connection', socket => {
     showConnectedUsers();
   });
 
-  socket.on('send_message', data => {
+  socket.on('send_message', message => {
     socket.emit('sent');
 
-    console.log(`send message[${data.message}] to room[${data.to}] via [new_message]`);
-    socket.in(data.to).emit('new_message', { message: data.message, from: data.from });
+    console.log(`send message[${message.text}] to room[${message.to}] via [new_message]`);
+    socket.in(message.to.email).emit('new_message', message);
   });
 
   socket.on('disconnect', () => {
