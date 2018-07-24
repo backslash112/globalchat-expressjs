@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var usersRouter = require('./routes/users');
 var tokensRouter = require('./routes/tokens');
+var chatsRouter = require('./routes/chats');
 var cors = require('cors');
 var helmet = require('helmet')
 var fs = require('fs');
@@ -21,6 +22,15 @@ mongoose.connect(`mongodb://${dbUser}:${dbPwd}@${dbHost}:${dbPort}/${dbName}`);
 
 var app = express();
 
+var httpServer = require('http').createServer(app);
+// const options = {
+//   cert: fs.readFileSync('./sslcert/fullchain.pem'),
+//   key: fs.readFileSync('./sslcert/privkey.pem')
+// };
+// var httpsServer = require('https').createServer(options, app)
+var io = require('socket.io')(httpServer)
+const chat = io.of('/chat');
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -35,8 +45,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // set version of API
 var v1 = express.Router();
+// pass the io object to routes
+v1.use(function (req, res, next) {
+  req.ioChat = chat;
+  next();
+});
 v1.use('/users', usersRouter);
 v1.use('/tokens', tokensRouter);
+v1.use('/chats', chatsRouter);
 app.use('/v1', v1);
 app.use('/', v1);
 
@@ -57,13 +73,7 @@ app.use(function (err, req, res, next) {
 });
 
 
-var httpServer = require('http').createServer(app);
-// const options = {
-//   cert: fs.readFileSync('./sslcert/fullchain.pem'),
-//   key: fs.readFileSync('./sslcert/privkey.pem')
-// };
-// var httpsServer = require('https').createServer(options, app)
-var io = require('socket.io')(httpServer)
+
 
 httpServer.listen(8080, () => {
   console.log('http listening on 8080...')
@@ -72,7 +82,6 @@ httpServer.listen(8080, () => {
 // httpsServer.listen(443, () => {
 //   console.log('https listening on 443...')
 // });
-const chat = io.of('/chat');
 
 // Gets a list of client IDs connected to this namespace 
 // via namespace.clients(callback) method: https://socket.io/docs/server-api/#namespace-clients-callback
