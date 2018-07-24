@@ -73,35 +73,53 @@ httpServer.listen(8080, () => {
 //   console.log('https listening on 443...')
 // });
 const chat = io.of('/chat');
+
+// Gets a list of client IDs connected to this namespace 
+// via namespace.clients(callback) method: https://socket.io/docs/server-api/#namespace-clients-callback
+function showConnectedSockets() {
+  chat.clients((err, clients) => {
+    console.log(`connected sockets: ${clients.length}: ${clients}`);
+  });
+}
+
+function showConnectedUsers() {
+  chat.clients((err, clients) => {
+    let emails = [];
+    for (let i = 0; i < clients.length; i++) {
+      const connectedClient = chat.connected[clients[i]];
+      const user = connectedClient.user;
+      if (user) {
+        emails.push(user.email);
+      }
+    }
+    console.log(`joined users: ${emails.length}: ${emails}`);
+  });
+}
 chat.on('connection', socket => {
   console.log('>connected!');
-  socket.on('join', data => {
-    const user = data.user;
+  // showConnectedSockets();
+  socket.on('join', user => {
     console.log('joined room: ' + user.email);
     socket.join(user.email);
 
     // Save the user to his socket object
     socket['user'] = user;
-    
+
     // socket.emit('joined', data);
     chat.emit('joined', user);
-    
-    // Gets a list of client IDs connected to this namespace 
-    // via namespace.clients(callback) method: https://socket.io/docs/server-api/#namespace-clients-callback
-    chat.clients((err, clients) => {
-      console.log(clients);
-      for (const id of clients) {
-        console.log(chat.connected[id].user);
-      }
-    });
+
+    showConnectedSockets();
+    showConnectedUsers();
+
   });
-  
-  socket.on('leave', data => {
-    const user = data.user;
+
+  socket.on('leave', user => {
     console.log('leaved room: ' + user.email);
     socket.leave(user.email);
-    // socket.emit('leaved');
+    socket.user = null;
     chat.emit('leaved', user);
+    showConnectedSockets();
+    showConnectedUsers();
   });
 
   socket.on('send_message', data => {
@@ -113,6 +131,7 @@ chat.on('connection', socket => {
 
   socket.on('disconnect', () => {
     console.log('>disconnected!');
+    showConnectedSockets();
   });
 })
 
